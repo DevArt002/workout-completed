@@ -1,0 +1,39 @@
+.completed-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 2;
+    overflow: hidden;
+}
+
+.workout-completed {
+    position: absolute;
+    top: 20%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 90%;
+    max-width: 600px;
+}
+
+.character {
+    width: 40%;
+    max-width: 180px;
+    position: absolute;
+    bottom: 40%;
+    left: 50%;
+    transform: translate(-50%, 0%);
+}
+
+/* #character1 {
+    transform: translate(-50%, 0%) rotate(-5deg);
+}
+
+#character2 {
+    transform: translate(20%, 50%) rotate(30deg);
+}
+
+#character3 {
+    transform: translate(-100%, 70%) rotate(-20deg);
+} */

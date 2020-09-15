@@ -1,26 +1,37 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { Component } from "react";
+import { FireworksContainer, CompletedContainer } from "./components";
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+import "./App.css";
+
+class App extends Component {
+    constructor(props) {
+        super(props);
+
+        this.state = {
+            playCompletedContainer: false,
+        };
+
+        this.delayCompletedContainer = 2; //1 second
+    }
+
+    componentDidMount() {
+        setTimeout(() => {
+            this.setState({
+                playCompletedContainer: true,
+            });
+        }, this.delayCompletedContainer * 1000);
+    }
+
+    render() {
+        const { playCompletedContainer } = this.state;
+        return (
+            <div className="app">
+                {playCompletedContainer && <CompletedContainer />}
+                <FireworksContainer />
+                <div className="black-overlay"></div>
+            </div>
+        );
+    }
 }
 
 export default App;
