@@ -1,4 +1,5 @@
 import FireworksContainer from "./fireworks-container/fireworks-container";
-import CompletedContainer from "./completed-container/completed-container";
+import CharacterContainer from "./character-container/character-container";
+import StatContainer from "./stat-container/stat-container";
 
-export { FireworksContainer, CompletedContainer };
+export { FireworksContainer, CharacterContainer, StatContainer };

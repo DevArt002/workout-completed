@@ -1,5 +1,9 @@
 import React, { Component } from "react";
-import { FireworksContainer, CompletedContainer } from "./components";
+import {
+    FireworksContainer,
+    CharacterContainer,
+    StatContainer,
+} from "./components";
 
 import "./App.css";
 
@@ -8,26 +12,49 @@ class App extends Component {
         super(props);
 
         this.state = {
-            playCompletedContainer: false,
+            enableCharacterAnimation: false,
+            enableStatAnimation: false,
         };
 
-        this.delayCompletedContainer = 2; //1 second
+        this.fireworksPlayDuration = 2.5; // 2.5 seconds
+        this.wcShowDuration = 1;
+        this.wcHiddenDuration = 1;
+        this.characterPlayDuration = 1.3;
     }
 
-    componentDidMount() {
-        setTimeout(() => {
-            this.setState({
-                playCompletedContainer: true,
-            });
-        }, this.delayCompletedContainer * 1000);
-    }
+    fireworksAnimationFinished = () => {
+        this.setState({
+            enableCharacterAnimation: true,
+        });
+    };
+
+    characterAnimationFinished = () => {
+        this.setState({
+            enableStatAnimation: true,
+            enableCharacterAnimation: false,
+        });
+    };
 
     render() {
-        const { playCompletedContainer } = this.state;
+        const { enableCharacterAnimation, enableStatAnimation } = this.state;
+
         return (
             <div className="app">
-                {playCompletedContainer && <CompletedContainer />}
-                <FireworksContainer />
+                {enableStatAnimation && <StatContainer />}
+                {enableCharacterAnimation && (
+                    <CharacterContainer
+                        characterAnimationFinished={
+                            this.characterAnimationFinished
+                        }
+                        wcShowDuration={this.wcShowDuration}
+                        wcHiddenDuration={this.wcHiddenDuration}
+                        characterPlayDuration={this.characterPlayDuration}
+                    />
+                )}
+                <FireworksContainer
+                    fireworksPlayDuration={this.fireworksPlayDuration}
+                    fireworksAnimationFinished={this.fireworksAnimationFinished}
+                />
                 <div className="black-overlay"></div>
             </div>
         );

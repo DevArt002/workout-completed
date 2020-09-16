@@ -1,5 +1,5 @@
 import React, { Component, createRef } from "react";
-import * as Fireworks from "../../utils/fireworks";
+import Fireworks from "../../utils/fireworks";
 
 import "./fireworks-container.css";
 
@@ -23,7 +23,10 @@ class FireworksContainer extends Component {
         const fireworks = new Fireworks(container, options);
         fireworks.start();
 
-        setTimeout(() => fireworks.stop(), 2500);
+        setTimeout(() => {
+            fireworks.stop();
+            this.props.fireworksAnimationFinished();
+        }, this.props.fireworksPlayDuration * 1000);
     }
 
     render() {

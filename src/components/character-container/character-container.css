@@ -1,4 +1,4 @@
-.completed-container {
+.character-container {
     position: absolute;
     top: 0;
     left: 0;
@@ -25,15 +25,3 @@
     left: 50%;
     transform: translate(-50%, 0%);
 }
-
-/* #character1 {
-    transform: translate(-50%, 0%) rotate(-5deg);
-}
-
-#character2 {
-    transform: translate(20%, 50%) rotate(30deg);
-}
-
-#character3 {
-    transform: translate(-100%, 70%) rotate(-20deg);
-} */

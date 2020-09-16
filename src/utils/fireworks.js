@@ -331,4 +331,4 @@ class Fireworks {
     }
 }
 
-module.exports = Fireworks;
+export default Fireworks;
