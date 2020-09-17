@@ -10,6 +10,8 @@
     "react": "16.8.0",
     "react-dom": "16.8.0",
     "react-gsap": "^2.2.1",
+    "react-image-webp": "^0.7.0",
+    "react-responsive-spritesheet": "^2.3.9",
     "react-scripts": "3.4.3"
   },
   "scripts": {

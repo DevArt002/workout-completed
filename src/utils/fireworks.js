@@ -1,9 +1,9 @@
-function random(min, max) {
+export function random(min, max) {
     return Math.random() * (max - min) + min;
 }
 const TAU = Math.PI * 2;
 
-class Particle {
+export class Particle {
     constructor({
         isRocket = false,
         hue = random(1, 360),
@@ -19,8 +19,8 @@ class Particle {
         this.positions = [this.position, this.position, this.position];
         if (this.isRocket) {
             this.velocity = {
-                x: random(-1.5, 1.5),
-                y: random(-10, -10),
+                x: random(-2, 2),
+                y: random(-15, -15),
             };
             this.shrink = 0.999;
             this.resistance = 1;
@@ -53,8 +53,8 @@ class Particle {
             brightness: random(50, 60),
             exploding: true,
             fade: 0.01,
-            spikes: parseInt(random(4, 6)),
-            size: 6,
+            spikes: 5,
+            size: 12,
         });
     }
     shouldRemove(cw, ch) {
@@ -200,7 +200,7 @@ class Things {
     }
 }
 
-class Fireworks {
+export default class Fireworks {
     constructor(
         container,
         {
@@ -331,4 +331,75 @@ class Fireworks {
     }
 }
 
-export default Fireworks;
+export class Sparkle {
+    constructor(container, numParticles) {
+        this.container = container;
+        this.cw = container.clientWidth;
+        this.ch = container.clientHeight;
+        this.pixelRatio = window.devicePixelRatio || 1;
+        this.canvas = document.createElement("canvas");
+        this.ctx = this.canvas.getContext("2d");
+        container.appendChild(this.canvas);
+        this.numParticles = numParticles;
+        this._set = new Set();
+        this.updateDimensions();
+    }
+    updateDimensions() {
+        this.canvas.width = this.cw * this.pixelRatio;
+        this.canvas.height = this.ch * this.pixelRatio;
+        this.canvas.style.width = this.cw + "px";
+        this.canvas.style.height = this.ch + "px";
+        this.ctx.scale(this.pixelRatio, this.pixelRatio);
+    }
+    add(thing) {
+        this._set.add(thing);
+    }
+    delete(thing) {
+        this._set.delete(thing);
+    }
+    addSparkles(x, y) {
+        for (let i = 0; i < this.numParticles; i += 1) {
+            this.add(
+                new Particle({
+                    position: {
+                        x: x,
+                        y: y,
+                    },
+                    hue: 40,
+                    brightness: random(50, 60),
+                    exploding: true,
+                    fade: 0.005,
+                    spikes: 5,
+                    size: 15,
+                })
+            );
+        }
+        this.rafInterval = window.requestAnimationFrame(() => this.update());
+    }
+    _clear(force = false) {
+        this.ctx.globalCompositeOperation = "destination-out";
+        this.ctx.fillStyle = `rgba(0, 0, 0 ${force ? "" : ", 0.5"})`;
+        this.ctx.fillRect(0, 0, this.cw, this.ch);
+        this.ctx.globalCompositeOperation = "lighter";
+    }
+    _finish() {
+        this._clear(true);
+    }
+    update() {
+        this._clear();
+        for (const particle of this._set) {
+            particle.draw(this.ctx);
+            particle.update();
+            if (particle.shouldRemove(this.cw, this.ch)) {
+                this.delete(particle);
+            }
+        }
+        if (this._set.size > 0) {
+            this.rafInterval = window.requestAnimationFrame(() =>
+                this.update()
+            );
+        } else {
+            this._finish();
+        }
+    }
+}
