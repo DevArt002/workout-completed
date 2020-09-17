@@ -1,12 +1,18 @@
 import React, { Component } from "react";
 import { Sine } from "gsap";
+import ReactAudioPlayer from "react-audio-player";
 import { domAnimate } from "../../../utils/animate-gsap";
 
 import "./big-progressbar.css";
 
+import progressSound from "../../../assets/sounds/progress.mp3";
+
 class BigProgressbar extends Component {
     constructor(props) {
         super(props);
+        this.state = {
+            playSound: false,
+        };
 
         this.progressRef = React.createRef();
     }
@@ -26,7 +32,11 @@ class BigProgressbar extends Component {
                 startWidth: "0%", // startWidth
                 endWidth: `${(this.props.value * 100) / this.props.maxValue}%`, // endWidth
                 curve: Sine.easeOut, // animation curve
-                callback: this.props.progressbarAnimationFinished,
+                callback: this.progressbarAnimationFinished,
+            });
+
+            this.setState({
+                playSound: true,
             });
 
             return true;
@@ -35,8 +45,17 @@ class BigProgressbar extends Component {
         return false;
     }
 
+    progressbarAnimationFinished = () => {
+        this.setState({
+            playSound: false,
+        });
+
+        this.props.progressbarAnimationFinished();
+    };
+
     render() {
         const { label, value, maxValue, maxValueHidden, subLabel } = this.props;
+        const { playSound } = this.state;
 
         return (
             <div className="big-progressbar">
@@ -49,6 +68,13 @@ class BigProgressbar extends Component {
                     {subLabel && <span className="subLabel">{subLabel}</span>}
                 </div>
                 <div className="progress" ref={this.progressRef}></div>
+                {playSound && (
+                    <ReactAudioPlayer
+                        src={progressSound}
+                        autoPlay
+                        controls={false}
+                    />
+                )}
             </div>
         );
     }

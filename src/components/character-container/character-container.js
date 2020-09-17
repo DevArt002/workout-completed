@@ -1,9 +1,12 @@
 import React, { Component } from "react";
 import { Circ, Bounce, Linear } from "gsap";
 import { isWebpSupported } from "react-image-webp/dist/utils";
+import ReactAudioPlayer from "react-audio-player";
 import { domAnimate } from "../../utils/animate-gsap";
 
 import "./character-container.css";
+
+import kidCheersSound from "../../assets/sounds/kids_cheers.mp3";
 
 import wcImgWebp from "../../assets/img/wc.webp";
 import characterImg1Webp from "../../assets/img/character1.webp";
@@ -22,6 +25,9 @@ const characterImg3 = isWebpSupported() ? characterImg3Webp : characterImg3Png;
 class CharacterContainer extends Component {
     constructor(props) {
         super(props);
+        this.state = {
+            playSound: false,
+        };
 
         this.wcRef = React.createRef();
         this.character1Ref = React.createRef();
@@ -34,6 +40,9 @@ class CharacterContainer extends Component {
     }
 
     componentDidMount() {
+        this.setState({
+            playSound: true,
+        });
         // Show workout completed text
         domAnimate({
             dom: this.wcRef.current,
@@ -99,11 +108,21 @@ class CharacterContainer extends Component {
                 startWidth: "90%",
                 endWidth: "90%",
                 curve: Linear.easeNone, // animation curve
-                callback: this.props.characterAnimationFinished,
+                callback: this.characterAnimationFinished,
             });
         }, this.characterPlayDuration * 1000 * 2);
     }
+
+    characterAnimationFinished = () => {
+        this.setState({
+            playSound: false,
+        });
+        this.props.characterAnimationFinished();
+    };
+
     render() {
+        const { playSound } = this.state;
+
         return (
             <div className="character-container">
                 <img
@@ -133,6 +152,13 @@ class CharacterContainer extends Component {
                     ref={this.character3Ref}
                     alt="character3"
                 />
+                {playSound && (
+                    <ReactAudioPlayer
+                        src={kidCheersSound}
+                        autoPlay
+                        controls={false}
+                    />
+                )}
             </div>
         );
     }
