@@ -1,0 +1,105 @@
+.stat-container {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 2;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.stat-container .board {
+    height: 80vh;
+    /* max-width: 600px; */
+    width: calc(80vh * 3331 / 4925);
+}
+
+@media (max-aspect-ratio: 3331/4925) {
+    .stat-container .board {
+        width: 85vw;
+        height: calc(85vw * 4925 / 3331);
+    }
+}
+
+.stat-container .stat-content {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 83%;
+    height: 91%;
+    padding: 4.5% 9% 4.5% 9%;
+}
+
+.stat-content .mission-row {
+    width: 100%;
+    height: 15%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.stat-content .mission-row p {
+    color: #913706;
+    font-size: 2.5em;
+    margin: 0;
+    padding: 0;
+    font-weight: bold;
+}
+
+@media screen and (max-width: 1200px) {
+    .stat-content .mission-row p {
+        font-size: 2.5em;
+    }
+}
+
+@media screen and (max-width: 992px) {
+    .stat-content .mission-row p {
+        font-size: 2.2em;
+    }
+}
+
+@media screen and (max-width: 768px) {
+    .stat-content .mission-row p {
+        font-size: 1.8em;
+    }
+}
+
+@media screen and (max-width: 480px) {
+    .stat-content .mission-row p {
+        font-size: 1.4em;
+    }
+}
+
+@media screen and (max-width: 320px) {
+    .stat-content .mission-row p {
+        font-size: 1em;
+    }
+}
+
+.stat-content .star-row {
+    width: 100%;
+    height: 20%;
+    display: flex;
+    justify-content: center;
+}
+.stat-content .score-row,
+.stat-content .speed-row,
+.stat-content .goal-row {
+    width: 100%;
+    height: 15%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.stat-content .goal-row {
+    height: 35%;
+}
+
+.particle-content {
+    position: fixed;
+    z-index: 3;
+    width: 100vw;
+    height: 100vh;
+}
