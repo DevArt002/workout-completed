@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import { Bounce } from "gsap";
 import { isWebpSupported } from "react-image-webp/dist/utils";
+import ReactAudioPlayer from "react-audio-player";
 import { domAnimate } from "../../utils/animate-gsap";
 import Star from "./star/star";
 import BigProgressbar from "./big-progressbar/big-progressbar";
@@ -8,6 +9,8 @@ import WeeklyGoal from "./weekly-goal/weekly-goal";
 import { Sparkle } from "../../utils/fireworks";
 
 import "./stat-container.css";
+
+import awardSound from "../../assets/sounds/award.mp3";
 
 import statBoardWebp from "../../assets/img/stat_board.webp";
 import statBoardPng from "../../assets/img/stat_board.png";
@@ -22,7 +25,7 @@ class StatContainer extends Component {
             stars: [
                 {
                     marginTop: 15,
-                    rotateDeg: -30,
+                    rotateDeg: 0,
                 },
                 {
                     marginTop: 0,
@@ -30,7 +33,7 @@ class StatContainer extends Component {
                 },
                 {
                     marginTop: 15,
-                    rotateDeg: 30,
+                    rotateDeg: 0,
                 },
             ],
             enableStarShowAnimation: false,
@@ -38,6 +41,7 @@ class StatContainer extends Component {
             enableScoreProgressAnimation: false,
             enableSpeedProgressAnimation: false,
             enableGoalProgressAnimation: false,
+            playSound: false,
         };
 
         this.statContainerRef = React.createRef();
@@ -61,27 +65,38 @@ class StatContainer extends Component {
     }
 
     componentDidMount() {
+        this.setState({
+            playSound: true,
+        });
+
         this.sparkle = new Sparkle(this.particleRef.current, 80);
 
         // Show popup
         this.showAnimation = domAnimate({
             dom: this.statContainerRef.current,
             duration: this.statContainerShowDuration, // duration
+            startX: "-50%",
+            endX: "-50%",
             startY: -2000, // startY
-            endY: 0, // endY
+            endY: "-50%", // endY
             curve: Bounce.easeOut, // animation curve
             callback: this.statContainerShowAnimationFinished,
         });
     }
 
     statContainerShowAnimationFinished = () => {
-        this.setState({
-            enableStarShowAnimation: true,
-            enableStarLightAnimation: false,
-            enableScoreProgressAnimation: false,
-            enableSpeedProgressAnimation: false,
-            enableGoalProgressAnimation: false,
-        });
+        setTimeout(
+            () =>
+                this.setState({
+                    enableStarShowAnimation: true,
+                    enableStarLightAnimation: false,
+                    enableScoreProgressAnimation: false,
+                    enableSpeedProgressAnimation: false,
+                    enableGoalProgressAnimation: false,
+                    playSound: false,
+                }),
+            1500
+        );
     };
 
     starShowAnimationFinished = () => {
@@ -95,6 +110,7 @@ class StatContainer extends Component {
             enableScoreProgressAnimation: false,
             enableSpeedProgressAnimation: false,
             enableGoalProgressAnimation: false,
+            playSound: false,
         });
     };
 
@@ -105,6 +121,7 @@ class StatContainer extends Component {
             enableScoreProgressAnimation: true,
             enableSpeedProgressAnimation: false,
             enableGoalProgressAnimation: false,
+            playSound: false,
         });
     };
 
@@ -115,6 +132,7 @@ class StatContainer extends Component {
             enableScoreProgressAnimation: false,
             enableSpeedProgressAnimation: true,
             enableGoalProgressAnimation: false,
+            playSound: false,
         });
     };
 
@@ -125,6 +143,7 @@ class StatContainer extends Component {
             enableScoreProgressAnimation: false,
             enableSpeedProgressAnimation: false,
             enableGoalProgressAnimation: true,
+            playSound: false,
         });
     };
 
@@ -135,9 +154,16 @@ class StatContainer extends Component {
             enableScoreProgressAnimation: false,
             enableSpeedProgressAnimation: false,
             enableGoalProgressAnimation: false,
+            playSound: false,
         });
 
-        setTimeout(() => this.showAnimation.reverse(), 2000);
+        setTimeout(() => {
+            this.showAnimation.reverse();
+        }, 2000);
+
+        setTimeout(() => {
+            this.props.statAnimationFinished();
+        }, 2000 + this.statContainerShowDuration * 1000);
     };
 
     addSparkles = (x, y) => {
@@ -152,6 +178,7 @@ class StatContainer extends Component {
             enableScoreProgressAnimation,
             enableSpeedProgressAnimation,
             enableGoalProgressAnimation,
+            playSound,
         } = this.state;
 
         return (
@@ -242,6 +269,13 @@ class StatContainer extends Component {
                     </div>
                 </div>
                 <div className="particle-content" ref={this.particleRef}></div>
+                {playSound && (
+                    <ReactAudioPlayer
+                        src={awardSound}
+                        autoPlay
+                        controls={false}
+                    />
+                )}
             </div>
         );
     }

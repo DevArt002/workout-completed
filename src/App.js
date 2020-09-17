@@ -25,7 +25,7 @@ class App extends Component {
         this.statContainerHiddenDuration = 1;
         this.starShowDuration = 0.5;
         this.starLightDuration = 1;
-        this.bigProgressbarPlayDuration = 2.5;
+        this.bigProgressbarPlayDuration = 1.5;
         this.smallProgressbarPlayDuration = 1.5;
 
         // Props from parent
@@ -42,13 +42,21 @@ class App extends Component {
     fireworksAnimationFinished = () => {
         this.setState({
             enableCharacterAnimation: true,
+            enableStatAnimation: false,
         });
     };
 
     characterAnimationFinished = () => {
         this.setState({
-            enableStatAnimation: true,
             enableCharacterAnimation: false,
+            enableStatAnimation: true,
+        });
+    };
+
+    statAnimationFinished = () => {
+        this.setState({
+            enableCharacterAnimation: false,
+            enableStatAnimation: false,
         });
     };
 
@@ -59,6 +67,7 @@ class App extends Component {
             <div className="app">
                 {enableStatAnimation && (
                     <StatContainer
+                        statAnimationFinished={this.statAnimationFinished}
                         statContainerShowDuration={
                             this.statContainerShowDuration
                         }
@@ -93,10 +102,12 @@ class App extends Component {
                         characterPlayDuration={this.characterPlayDuration}
                     />
                 )}
+
                 <FireworksContainer
                     fireworksPlayDuration={this.fireworksPlayDuration}
                     fireworksAnimationFinished={this.fireworksAnimationFinished}
                 />
+
                 <div className="black-overlay"></div>
             </div>
         );

@@ -1,9 +1,12 @@
 import React, { Component } from "react";
 import { Bounce } from "gsap";
 import { isWebpSupported } from "react-image-webp/dist/utils";
+import ReactAudioPlayer from "react-audio-player";
 import { domAnimate } from "../../../utils/animate-gsap";
 
 import "./star.css";
+
+import rewardSound from "../../../assets/sounds/reward.mp3";
 
 import starBaseWebp from "../../../assets/img/star_base.webp";
 import starSpriteWebp from "../../../assets/img/star_sprite.webp";
@@ -20,6 +23,7 @@ class Star extends Component {
         this.state = {
             starSize: 0,
             starSpriteXOffset: 0,
+            playSound: false,
         };
 
         this.spriteRef = React.createRef();
@@ -68,7 +72,17 @@ class Star extends Component {
                     curve: Bounce.easeOut, // animation curve
                     callback: this.props.starShowAnimationFinished,
                 });
+
                 this.spriteRef.current.style.visibility = "visible";
+
+                setTimeout(
+                    () =>
+                        this.setState({
+                            playSound: true,
+                        }),
+                    200
+                );
+
                 setTimeout(() => {
                     const boundingClientRect = this.baseRef.current.getBoundingClientRect();
                     const centerPosX =
@@ -104,6 +118,11 @@ class Star extends Component {
 
                 if (this.lightAnimationPlaytime < 1) {
                     clearInterval(lightInterval);
+                    setTimeout(() => {
+                        this.setState({
+                            playSound: false,
+                        });
+                    }, 1000);
                     this.props.starLightAnimationFinished();
                     return;
                 }
@@ -127,7 +146,7 @@ class Star extends Component {
 
     render() {
         const { rotateDeg, marginTop } = this.props;
-        const { starSpriteXOffset, starSize } = this.state;
+        const { starSpriteXOffset, starSize, playSound } = this.state;
 
         return (
             <div
@@ -157,6 +176,13 @@ class Star extends Component {
                     }}
                     ref={this.spriteRef}
                 />
+                {playSound && (
+                    <ReactAudioPlayer
+                        src={rewardSound}
+                        autoPlay
+                        controls={false}
+                    />
+                )}
             </div>
         );
     }

@@ -1,3 +1,5 @@
+import { mobileCheck } from "./mobile-check";
+
 export function random(min, max) {
     return Math.random() * (max - min) + min;
 }
@@ -52,9 +54,9 @@ export class Particle {
             hue: random(1, 360),
             brightness: random(50, 60),
             exploding: true,
-            fade: 0.01,
+            fade: 0.005,
             spikes: 5,
-            size: 12,
+            size: 15,
         });
     }
     shouldRemove(cw, ch) {
@@ -121,10 +123,10 @@ export class Particle {
         }
     }
     drawStar(ctx, cx, cy, spikes, outerRadius, innerRadius) {
-        var rot = (Math.PI / 2) * 3;
-        var x = cx;
-        var y = cy;
-        var step = Math.PI / spikes;
+        let rot = (Math.PI / 2) * 3;
+        let x = cx;
+        let y = cy;
+        const step = Math.PI / spikes;
 
         ctx.strokeSyle = "#000";
         ctx.beginPath();
@@ -142,9 +144,12 @@ export class Particle {
         }
         ctx.lineTo(cx, cy - outerRadius);
         ctx.closePath();
-        ctx.lineWidth = 4;
-        ctx.strokeStyle = `hsla(${this.hue}, 100%, ${this.brightness}%, ${this.alpha})`;
-        ctx.stroke();
+
+        if (!mobileCheck()) {
+            ctx.lineWidth = 4;
+            ctx.strokeStyle = `hsla(${this.hue}, 100%, ${this.brightness}%, ${this.alpha})`;
+            ctx.stroke();
+        }
         ctx.fillStyle = `hsla(${this.hue}, 100%, ${this.brightness}%, ${this.alpha})`;
         ctx.fill();
     }
@@ -370,7 +375,7 @@ export class Sparkle {
                     exploding: true,
                     fade: 0.005,
                     spikes: 5,
-                    size: 15,
+                    size: 14,
                 })
             );
         }
