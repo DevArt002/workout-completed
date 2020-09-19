@@ -1,7 +1,6 @@
 import React, { Component } from "react";
 import { Circ, Bounce, Linear } from "gsap";
 import { isWebpSupported } from "react-image-webp/dist/utils";
-import ReactAudioPlayer from "react-audio-player";
 import { domAnimate } from "../../utils/animate-gsap";
 
 import "./character-container.css";
@@ -26,139 +25,171 @@ class CharacterContainer extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            playSound: false,
+            characters: [
+                {
+                    img: characterImg1,
+                    id: "character1",
+                    ref: React.createRef(),
+                    startRotZ: -10,
+                    endRotZ: 45,
+                    startX: 0,
+                    endX: 0,
+                    startY: 800,
+                    endY: 0,
+                    startWidth: "40%",
+                    endWidth: "40%",
+                    curve: Circ.easeOut,
+                    reverse: true,
+                },
+                {
+                    img: characterImg2,
+                    id: "character2",
+                    ref: React.createRef(),
+                    startRotZ: -20,
+                    endRotZ: 30,
+                    startX: 90,
+                    endX: 90,
+                    startY: 1100,
+                    endY: 150,
+                    startWidth: "40%",
+                    endWidth: "40%",
+                    curve: Circ.easeOut,
+                    reverse: true,
+                },
+                {
+                    img: characterImg3,
+                    id: "character3",
+                    ref: React.createRef(),
+                    startRotZ: 10,
+                    startX: -90,
+                    endX: -90,
+                    endRotZ: -20,
+                    startY: 1250,
+                    endY: 100,
+                    startWidth: "40%",
+                    endWidth: "40%",
+                    curve: Circ.easeOut,
+                    reverse: true,
+                },
+            ],
         };
 
+        this.characterContainerRef = React.createRef();
         this.wcRef = React.createRef();
-        this.character1Ref = React.createRef();
-        this.character2Ref = React.createRef();
-        this.character3Ref = React.createRef();
+        this.soundRef = React.createRef();
 
-        this.wcShowDuration = props.wcShowDuration;
-        this.wcHiddenDuration = props.wcHiddenDuration;
-        this.characterPlayDuration = props.characterPlayDuration;
+        this.totalLoad = 3; // Count of components to load external assets
+        this.currentLoad = 0; // Count of assets loaded
     }
 
-    componentDidMount() {
-        this.setState({
-            playSound: true,
-        });
-        // Show workout completed text
-        domAnimate({
-            dom: this.wcRef.current,
-            duration: this.wcShowDuration, // duration
-            startScale: 0, // startScale
-            endScale: 1, // endScale
-            startY: 300, // startY
-            endY: 0, // endY
-            startWidth: "90%",
-            endWidth: "90%",
-            curve: Bounce.easeOut, // animation curve
-        });
-        // Show&Hiddeen character1
-        domAnimate({
-            dom: this.character1Ref.current,
-            duration: this.characterPlayDuration, //duration
-            startRotZ: -10, // startRotZ
-            endRotZ: 45, // endRotZ
-            startY: 800, // startY
-            endY: 0, // endY
-            startWidth: "40%",
-            endWidth: "40%",
-            curve: Circ.easeOut, // animation curve
-            reverse: true,
-        });
-        // Show&Hiddeen character2
-        domAnimate({
-            dom: this.character2Ref.current,
-            duration: this.characterPlayDuration, //duration
-            startRotZ: -20, // startRotZ
-            endRotZ: 30, // endRotZ
-            startX: 90, // startX
-            endX: 90, // endX
-            startY: 1100, // startY
-            endY: 150, // endY
-            startWidth: "40%",
-            endWidth: "40%",
-            curve: Circ.easeOut, // animation curve
-            reverse: true,
-        });
-        // Show&Hiddeen character3
-        domAnimate({
-            dom: this.character3Ref.current,
-            duration: this.characterPlayDuration, //duration
-            startRotZ: 10, // startRotZ
-            startX: -90, // startX
-            endX: -90, // endX
-            endRotZ: -20, // endRotZ
-            startY: 1250, // startY
-            endY: 100, // endY
-            startWidth: "40%",
-            endWidth: "40%",
-            curve: Circ.easeOut, // animation curve
-            reverse: true,
-        });
-        // After disappearance of characters, hidden workout completed text as well
-        setTimeout(() => {
+    componentDidUpdate(prevProps, prevState, snapshot) {}
+
+    getSnapshotBeforeUpdate(prevProps, prevState) {
+        if (
+            prevProps.enableCharacterAnimation !==
+                this.props.enableCharacterAnimation &&
+            this.props.enableCharacterAnimation
+        ) {
+            // Show all hidden
+            this.characterContainerRef.current.style.display = "inline";
+            // Play sound
+            this.soundRef.current.play();
+
+            // Show workout completed text
             domAnimate({
                 dom: this.wcRef.current,
-                duration: this.wcShowDuration, //duration
-                startY: 0, // startY
-                endY: 2000, // endY
+                duration: this.props.wcShowDuration, // duration
+                startScale: 0, // startScale
+                endScale: 1, // endScale
+                startY: 300, // startY
+                endY: 0, // endY
                 startWidth: "90%",
                 endWidth: "90%",
-                curve: Linear.easeNone, // animation curve
-                callback: this.characterAnimationFinished,
+                curve: Bounce.easeOut, // animation curve
             });
-        }, this.characterPlayDuration * 1000 * 2);
+            this.state.characters.map((character, index) => {
+                domAnimate({
+                    dom: character.ref.current,
+                    duration: this.props.characterPlayDuration, //duration
+                    startRotZ: character.startRotZ, // startRotZ
+                    endRotZ: character.endRotZ, // endRotZ
+                    startX: character.startX, // startX
+                    endX: character.endX, // endX
+                    startY: character.startY, // startY
+                    endY: character.endY, // endY
+                    startWidth: character.startWidth,
+                    endWidth: character.endWidth,
+                    curve: character.curve, // animation curve
+                    reverse: character.reverse,
+                });
+            });
+            // After disappearance of characters, hidden workout completed text as well
+            setTimeout(() => {
+                domAnimate({
+                    dom: this.wcRef.current,
+                    duration: this.props.wcHiddenDuration, //duration
+                    startY: 0, // startY
+                    endY: 2000, // endY
+                    startWidth: "90%",
+                    endWidth: "90%",
+                    curve: Linear.easeNone, // animation curve
+                    callback: this.characterAnimationFinished,
+                });
+            }, this.props.characterPlayDuration * 1000 * 2);
+
+            return true;
+        }
+
+        return false;
     }
 
+    assetLoaded = () => {
+        this.currentLoad++;
+
+        if (this.currentLoad !== this.totalLoad) return;
+
+        this.props.assetLoaded();
+    };
+
     characterAnimationFinished = () => {
-        this.setState({
-            playSound: false,
-        });
+        this.soundRef.current.pause();
+        this.characterContainerRef.current.style.display = "none";
         this.props.characterAnimationFinished();
     };
 
     render() {
-        const { playSound } = this.state;
+        const { characters } = this.state;
 
         return (
-            <div className="character-container">
+            <div
+                className="character-container"
+                ref={this.characterContainerRef}
+            >
                 <img
                     src={wcImg}
                     className="workout-completed"
                     ref={this.wcRef}
                     alt="workout-completed"
+                    onLoad={this.assetLoaded}
                 />
-                <img
-                    src={characterImg1}
-                    className="character"
-                    id="character1"
-                    ref={this.character1Ref}
-                    alt="character1"
+                {characters.map((character, index) => {
+                    return (
+                        <img
+                            src={character.img}
+                            className="character"
+                            id={character.id}
+                            ref={character.ref}
+                            alt={character.id}
+                            onLoad={this.assetLoaded}
+                            key={index}
+                        />
+                    );
+                })}
+                <audio
+                    src={kidCheersSound}
+                    onCanPlayThrough={this.assetLoaded}
+                    ref={this.soundRef}
                 />
-                <img
-                    src={characterImg2}
-                    className="character"
-                    id="character2"
-                    ref={this.character2Ref}
-                    alt="character2"
-                />
-                <img
-                    src={characterImg3}
-                    className="character"
-                    id="character3"
-                    ref={this.character3Ref}
-                    alt="character3"
-                />
-                {playSound && (
-                    <ReactAudioPlayer
-                        src={kidCheersSound}
-                        autoPlay
-                        controls={false}
-                    />
-                )}
             </div>
         );
     }

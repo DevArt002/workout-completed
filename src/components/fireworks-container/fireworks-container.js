@@ -1,6 +1,5 @@
 import React, { Component } from "react";
 import Fireworks from "../../utils/fireworks";
-import ReactAudioPlayer from "react-audio-player";
 
 import "./fireworks-container.css";
 
@@ -9,11 +8,12 @@ import fireworksSound from "../../assets/sounds/fireworks.mp3";
 class FireworksContainer extends Component {
     constructor(props) {
         super(props);
-        this.state = {
-            playSound: false,
-        };
 
         this.fireworksContainerRef = React.createRef();
+        this.soundRef = React.createRef();
+
+        this.totalLoad = 1; // Count of components to load external assets
+        this.currentLoad = 0; // Count of assets loaded
     }
 
     componentDidMount() {
@@ -26,40 +26,55 @@ class FireworksContainer extends Component {
             explosionMaxHeight: 0.8, // percentage. max height before a particle is exploded
             explosionChance: 0.05, // chance in each tick the rocket will explode
         };
-        const fireworks = new Fireworks(container, options);
-        fireworks.start();
-
-        this.setState({
-            playSound: true,
-        });
-
-        setTimeout(() => {
-            fireworks.stop();
-            this.props.fireworksAnimationFinished();
-        }, this.props.fireworksPlayDuration * 1000);
-
-        setTimeout(() => {
-            this.setState({
-                playSound: false,
-            });
-        }, this.props.fireworksPlayDuration * 1000 + 1000);
+        this.fireworks = new Fireworks(container, options);
     }
 
-    render() {
-        const { playSound } = this.state;
+    componentDidUpdate(prevProps, prevState, snapshot) {}
 
+    getSnapshotBeforeUpdate(prevProps, prevState) {
+        if (
+            prevProps.loadedAllAssets !== this.props.loadedAllAssets &&
+            this.props.loadedAllAssets
+        ) {
+            // Play fireworks
+            this.fireworks.start();
+            // Play sound
+            this.soundRef.current.play();
+
+            setTimeout(() => {
+                this.fireworks.stop();
+                this.props.fireworksAnimationFinished();
+            }, this.props.fireworksMinPlayDuration * 1000);
+
+            setTimeout(() => {
+                this.soundRef.current.pause();
+            }, this.props.fireworksMinPlayDuration * 1000 + 1000);
+
+            return true;
+        }
+
+        return false;
+    }
+
+    assetLoaded = () => {
+        this.currentLoad++;
+
+        if (this.currentLoad !== this.totalLoad) return;
+
+        this.props.assetLoaded();
+    };
+
+    render() {
         return (
             <div
                 className="fireworks-container"
                 ref={this.fireworksContainerRef}
             >
-                {playSound && (
-                    <ReactAudioPlayer
-                        src={fireworksSound}
-                        autoPlay
-                        controls={false}
-                    />
-                )}
+                <audio
+                    src={fireworksSound}
+                    onCanPlayThrough={this.assetLoaded}
+                    ref={this.soundRef}
+                />
             </div>
         );
     }

@@ -54,7 +54,7 @@ export class Particle {
             hue: random(1, 360),
             brightness: random(50, 60),
             exploding: true,
-            fade: 0.005,
+            fade: 0.02,
             spikes: 5,
             size: 15,
         });
@@ -146,7 +146,7 @@ export class Particle {
         ctx.closePath();
 
         if (!mobileCheck()) {
-            ctx.lineWidth = 4;
+            ctx.lineWidth = 2;
             ctx.strokeStyle = `hsla(${this.hue}, 100%, ${this.brightness}%, ${this.alpha})`;
             ctx.stroke();
         }

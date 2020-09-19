@@ -1,7 +1,6 @@
 import React, { Component } from "react";
 import { Bounce } from "gsap";
 import { isWebpSupported } from "react-image-webp/dist/utils";
-import ReactAudioPlayer from "react-audio-player";
 import { domAnimate } from "../../utils/animate-gsap";
 import Star from "./star/star";
 import BigProgressbar from "./big-progressbar/big-progressbar";
@@ -25,7 +24,7 @@ class StatContainer extends Component {
             stars: [
                 {
                     marginTop: 15,
-                    rotateDeg: 0,
+                    rotateDeg: -15,
                 },
                 {
                     marginTop: 0,
@@ -33,7 +32,7 @@ class StatContainer extends Component {
                 },
                 {
                     marginTop: 15,
-                    rotateDeg: 0,
+                    rotateDeg: 15,
                 },
             ],
             enableStarShowAnimation: false,
@@ -41,17 +40,12 @@ class StatContainer extends Component {
             enableScoreProgressAnimation: false,
             enableSpeedProgressAnimation: false,
             enableGoalProgressAnimation: false,
-            playSound: false,
         };
 
         this.statContainerRef = React.createRef();
         this.particleRef = React.createRef();
+        this.soundRef = React.createRef();
 
-        this.statContainerShowDuration = this.props.statContainerShowDuration;
-        this.starShowDuration = this.props.starShowDuration;
-        this.starLightDuration = this.props.starLightDuration;
-        this.bigProgressbarPlayDuration = this.props.bigProgressbarPlayDuration;
-        this.smallProgressbarPlayDuration = this.props.smallProgressbarPlayDuration;
         this.missionNum = props.missionNumber;
         this.score = props.score;
         this.maxScore = props.maxScore;
@@ -62,41 +56,65 @@ class StatContainer extends Component {
         this.maxGoal = props.maxGoal;
         this.totalStar = 3;
         this.shownStar = 0;
+
+        this.totalLoad = 8; // Count of components to load external assets
+        this.currentLoad = 0; // Count of assets loaded
     }
 
     componentDidMount() {
-        this.setState({
-            playSound: true,
-        });
-
         this.sparkle = new Sparkle(this.particleRef.current, 80);
-
-        // Show popup
-        this.showAnimation = domAnimate({
-            dom: this.statContainerRef.current,
-            duration: this.statContainerShowDuration, // duration
-            startX: "-50%",
-            endX: "-50%",
-            startY: -2000, // startY
-            endY: "-50%", // endY
-            curve: Bounce.easeOut, // animation curve
-            callback: this.statContainerShowAnimationFinished,
-        });
     }
 
+    componentDidUpdate(prevProps, prevState, snapshot) {}
+
+    getSnapshotBeforeUpdate(prevProps, prevState) {
+        if (
+            prevProps.enableStatAnimation !== this.props.enableStatAnimation &&
+            this.props.enableStatAnimation
+        ) {
+            // Show all hidden
+            this.statContainerRef.current.style.visibility = "visible";
+            // Play sound
+            this.soundRef.current.play();
+            // Show popup
+            this.showAnimation = domAnimate({
+                dom: this.statContainerRef.current,
+                duration: this.props.statContainerShowDuration, // duration
+                startScaleY: 0.5,
+                endScaleY: 1,
+                startX: "-50%",
+                endX: "-50%",
+                startY: -2000, // startY
+                endY: "-50%", // endY
+                curve: Bounce.easeOut, // animation curve
+                callback: this.statContainerShowAnimationFinished,
+            });
+
+            return true;
+        }
+
+        return false;
+    }
+
+    assetLoaded = () => {
+        this.currentLoad++;
+
+        if (this.currentLoad !== this.totalLoad) return;
+
+        this.props.assetLoaded();
+    };
+
     statContainerShowAnimationFinished = () => {
-        setTimeout(
-            () =>
-                this.setState({
-                    enableStarShowAnimation: true,
-                    enableStarLightAnimation: false,
-                    enableScoreProgressAnimation: false,
-                    enableSpeedProgressAnimation: false,
-                    enableGoalProgressAnimation: false,
-                    playSound: false,
-                }),
-            1500
-        );
+        setTimeout(() => {
+            this.setState({
+                enableStarShowAnimation: true,
+                enableStarLightAnimation: false,
+                enableScoreProgressAnimation: false,
+                enableSpeedProgressAnimation: false,
+                enableGoalProgressAnimation: false,
+            });
+            this.soundRef.current.pause();
+        }, 1500);
     };
 
     starShowAnimationFinished = () => {
@@ -110,7 +128,6 @@ class StatContainer extends Component {
             enableScoreProgressAnimation: false,
             enableSpeedProgressAnimation: false,
             enableGoalProgressAnimation: false,
-            playSound: false,
         });
     };
 
@@ -121,7 +138,6 @@ class StatContainer extends Component {
             enableScoreProgressAnimation: true,
             enableSpeedProgressAnimation: false,
             enableGoalProgressAnimation: false,
-            playSound: false,
         });
     };
 
@@ -132,7 +148,6 @@ class StatContainer extends Component {
             enableScoreProgressAnimation: false,
             enableSpeedProgressAnimation: true,
             enableGoalProgressAnimation: false,
-            playSound: false,
         });
     };
 
@@ -143,7 +158,6 @@ class StatContainer extends Component {
             enableScoreProgressAnimation: false,
             enableSpeedProgressAnimation: false,
             enableGoalProgressAnimation: true,
-            playSound: false,
         });
     };
 
@@ -154,16 +168,16 @@ class StatContainer extends Component {
             enableScoreProgressAnimation: false,
             enableSpeedProgressAnimation: false,
             enableGoalProgressAnimation: false,
-            playSound: false,
         });
 
-        setTimeout(() => {
-            this.showAnimation.reverse();
-        }, 2000);
+        // setTimeout(() => {
+        //     this.props.statAnimationFinished();
+        // }, 2000 + this.props.statContainerShowDuration * 1000);
+    };
 
-        setTimeout(() => {
-            this.props.statAnimationFinished();
-        }, 2000 + this.statContainerShowDuration * 1000);
+    handleContinue = () => {
+        this.showAnimation.reverse();
+        this.props.statAnimationFinished();
     };
 
     addSparkles = (x, y) => {
@@ -178,104 +192,123 @@ class StatContainer extends Component {
             enableScoreProgressAnimation,
             enableSpeedProgressAnimation,
             enableGoalProgressAnimation,
-            playSound,
         } = this.state;
 
         return (
             <div className="stat-container" ref={this.statContainerRef}>
-                <img src={statBoard} className="board" alt="stat board" />
+                <div className="stat-board">
+                    <img
+                        src={statBoard}
+                        className="board"
+                        alt="stat board"
+                        onLoad={this.assetLoaded}
+                    />
 
-                <div className="stat-content">
-                    <div className="mission-row">
-                        <p>WORKOUT {this.missionNum}</p>
-                    </div>
-                    <div className="star-row">
-                        {stars.map((star, index) => {
-                            return (
-                                <Star
-                                    rotateDeg={star.rotateDeg}
-                                    marginTop={star.marginTop}
-                                    starShowAnimationFinished={
-                                        this.starShowAnimationFinished
-                                    }
-                                    starLightAnimationFinished={
-                                        this.starLightAnimationFinished
-                                    }
-                                    addSparkles={this.addSparkles}
-                                    enableStarShowAnimation={
-                                        enableStarShowAnimation
-                                    }
-                                    enableStarLightAnimation={
-                                        enableStarLightAnimation
-                                    }
-                                    starShowDuration={this.starShowDuration}
-                                    starLightDuration={this.starLightDuration}
-                                    delay={this.starShowDuration * index}
-                                    key={index}
-                                />
-                            );
-                        })}
-                    </div>
-                    <div className="score-row">
-                        <BigProgressbar
-                            label="SCORE"
-                            value={this.score}
-                            maxValue={this.maxScore}
-                            maxValueHidden={false}
-                            enableProgressAnimation={
-                                enableScoreProgressAnimation
-                            }
-                            progressbarPlayDuration={
-                                this.bigProgressbarPlayDuration
-                            }
-                            progressbarAnimationFinished={
-                                this.scoreProgressbarAnimationFinished
-                            }
-                        />
-                    </div>
-                    <div className="speed-row">
-                        <BigProgressbar
-                            label="SPEED"
-                            value={this.speed}
-                            maxValue={this.maxSpeed}
-                            maxValueHidden={true}
-                            subLabel="Questions/Min"
-                            enableProgressAnimation={
-                                enableSpeedProgressAnimation
-                            }
-                            progressbarPlayDuration={
-                                this.bigProgressbarPlayDuration
-                            }
-                            progressbarAnimationFinished={
-                                this.speedProgressbarAnimationFinished
-                            }
-                        />
-                    </div>
-                    <div className="goal-row">
-                        <WeeklyGoal
-                            value={this.goal}
-                            maxValue={this.maxGoal}
-                            day={this.day}
-                            enableProgressAnimation={
-                                enableGoalProgressAnimation
-                            }
-                            progressbarPlayDuration={
-                                this.smallProgressbarPlayDuration
-                            }
-                            progressbarAnimationFinished={
-                                this.goalProgressbarAnimationFinished
-                            }
-                        />
+                    <div className="stat-content">
+                        <div className="mission-row">
+                            <p>WORKOUT {this.missionNum}</p>
+                        </div>
+                        <div className="star-row">
+                            {stars.map((star, index) => {
+                                return (
+                                    <Star
+                                        rotateDeg={star.rotateDeg}
+                                        marginTop={star.marginTop}
+                                        assetLoaded={this.assetLoaded}
+                                        starShowAnimationFinished={
+                                            this.starShowAnimationFinished
+                                        }
+                                        starLightAnimationFinished={
+                                            this.starLightAnimationFinished
+                                        }
+                                        addSparkles={this.addSparkles}
+                                        enableStarShowAnimation={
+                                            enableStarShowAnimation
+                                        }
+                                        enableStarLightAnimation={
+                                            enableStarLightAnimation
+                                        }
+                                        starShowDuration={
+                                            this.props.starShowDuration
+                                        }
+                                        starLightDuration={
+                                            this.props.starLightDuration
+                                        }
+                                        delay={
+                                            this.props.starShowDuration * index
+                                        }
+                                        key={index}
+                                    />
+                                );
+                            })}
+                        </div>
+                        <div className="score-row">
+                            <BigProgressbar
+                                label="SCORE"
+                                value={this.score}
+                                maxValue={this.maxScore}
+                                maxValueHidden={false}
+                                step={1}
+                                enableProgressAnimation={
+                                    enableScoreProgressAnimation
+                                }
+                                progressbarPlayDuration={
+                                    this.props.bigProgressbarPlayDuration
+                                }
+                                progressbarAnimationFinished={
+                                    this.scoreProgressbarAnimationFinished
+                                }
+                                assetLoaded={this.assetLoaded}
+                            />
+                        </div>
+                        <div className="speed-row">
+                            <BigProgressbar
+                                label="SPEED"
+                                value={this.speed}
+                                maxValue={this.maxSpeed}
+                                maxValueHidden={true}
+                                step={0.1}
+                                subLabel="Questions/Min"
+                                enableProgressAnimation={
+                                    enableSpeedProgressAnimation
+                                }
+                                progressbarPlayDuration={
+                                    this.props.bigProgressbarPlayDuration
+                                }
+                                progressbarAnimationFinished={
+                                    this.speedProgressbarAnimationFinished
+                                }
+                                assetLoaded={this.assetLoaded}
+                            />
+                        </div>
+                        <div className="goal-row">
+                            <WeeklyGoal
+                                value={this.goal}
+                                maxValue={this.maxGoal}
+                                day={this.day}
+                                enableProgressAnimation={
+                                    enableGoalProgressAnimation
+                                }
+                                progressbarPlayDuration={
+                                    this.props.smallProgressbarPlayDuration
+                                }
+                                progressbarAnimationFinished={
+                                    this.goalProgressbarAnimationFinished
+                                }
+                                assetLoaded={this.assetLoaded}
+                            />
+                        </div>
                     </div>
                 </div>
+                <button className="continue-btn" onClick={this.handleContinue}>
+                    CONTINUE
+                </button>
                 <div className="particle-content" ref={this.particleRef}></div>
-                {playSound && (
-                    <ReactAudioPlayer
-                        src={awardSound}
-                        autoPlay
-                        controls={false}
-                    />
-                )}
+                <audio
+                    src={awardSound}
+                    onCanPlayThrough={this.assetLoaded}
+                    ref={this.soundRef}
+                />
             </div>
         );
     }

@@ -1,7 +1,6 @@
 import React, { Component } from "react";
 import { Bounce } from "gsap";
 import { isWebpSupported } from "react-image-webp/dist/utils";
-import ReactAudioPlayer from "react-audio-player";
 import { domAnimate } from "../../../utils/animate-gsap";
 
 import "./star.css";
@@ -23,11 +22,11 @@ class Star extends Component {
         this.state = {
             starSize: 0,
             starSpriteXOffset: 0,
-            playSound: false,
         };
 
         this.spriteRef = React.createRef();
         this.baseRef = React.createRef();
+        this.soundRef = React.createRef();
 
         this.starShowDuration = this.props.starShowDuration;
         this.starLightDuration = this.props.starLightDuration;
@@ -36,6 +35,9 @@ class Star extends Component {
         this.currentFrame = 0;
         this.frameCount = 25;
         this.lightAnimationPlaytime = 2;
+
+        this.totalLoad = 3; // Count of components to load external assets
+        this.currentLoad = 0; // Count of assets loaded
 
         window.addEventListener("resize", this.onWindowResize, false);
     }
@@ -75,13 +77,13 @@ class Star extends Component {
 
                 this.spriteRef.current.style.visibility = "visible";
 
-                setTimeout(
-                    () =>
-                        this.setState({
-                            playSound: true,
-                        }),
-                    200
-                );
+                setTimeout(() => {
+                    // Play sound
+                    this.soundRef.current.play();
+                    setTimeout(() => {
+                        this.soundRef.current.pause();
+                    }, 600);
+                }, 200);
 
                 setTimeout(() => {
                     const boundingClientRect = this.baseRef.current.getBoundingClientRect();
@@ -108,6 +110,14 @@ class Star extends Component {
         return false;
     }
 
+    assetLoaded = () => {
+        this.currentLoad++;
+
+        if (this.currentLoad !== this.totalLoad) return;
+
+        this.props.assetLoaded();
+    };
+
     // Sweep light animation
     startLightAnimation = () => {
         const lightInterval = setInterval(() => {
@@ -118,11 +128,6 @@ class Star extends Component {
 
                 if (this.lightAnimationPlaytime < 1) {
                     clearInterval(lightInterval);
-                    setTimeout(() => {
-                        this.setState({
-                            playSound: false,
-                        });
-                    }, 1000);
                     this.props.starLightAnimationFinished();
                     return;
                 }
@@ -146,7 +151,7 @@ class Star extends Component {
 
     render() {
         const { rotateDeg, marginTop } = this.props;
-        const { starSpriteXOffset, starSize, playSound } = this.state;
+        const { starSpriteXOffset, starSize } = this.state;
 
         return (
             <div
@@ -163,6 +168,7 @@ class Star extends Component {
                     }}
                     alt="starBase"
                     ref={this.baseRef}
+                    onLoad={this.assetLoaded}
                 />
                 <img
                     className="star-sprite"
@@ -175,14 +181,13 @@ class Star extends Component {
                         height: `${starSize}px`,
                     }}
                     ref={this.spriteRef}
+                    onLoad={this.assetLoaded}
                 />
-                {playSound && (
-                    <ReactAudioPlayer
-                        src={rewardSound}
-                        autoPlay
-                        controls={false}
-                    />
-                )}
+                <audio
+                    src={rewardSound}
+                    onCanPlayThrough={this.assetLoaded}
+                    ref={this.soundRef}
+                />
             </div>
         );
     }
