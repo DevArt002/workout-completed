@@ -1,7 +1,6 @@
 import React, { Component } from "react";
 import { Sine } from "gsap";
-import ReactAudioPlayer from "react-audio-player";
-import { domAnimate } from "../../../utils/animate-gsap";
+import { domAnimate, countUp } from "../../../utils/animate-gsap";
 
 import "./big-progressbar.css";
 
@@ -11,10 +10,14 @@ class BigProgressbar extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            playSound: false,
+            value: 0,
         };
 
         this.progressRef = React.createRef();
+        this.soundRef = React.createRef();
+
+        this.totalLoad = 1; // Count of components to load external assets
+        this.currentLoad = 0; // Count of assets loaded
     }
 
     componentDidUpdate(prevProps, prevState, snapshot) {}
@@ -34,10 +37,16 @@ class BigProgressbar extends Component {
                 curve: Sine.easeOut, // animation curve
                 callback: this.progressbarAnimationFinished,
             });
-
-            this.setState({
-                playSound: true,
+            // Count up
+            countUp({
+                duration: this.props.progressbarPlayDuration,
+                val: this.props.value,
+                step: this.props.step,
+                curve: Sine.easeOut, // animation curve
+                updateFunc: this.updateValue,
             });
+            // Play sound
+            this.soundRef.current.play();
 
             return true;
         }
@@ -45,36 +54,46 @@ class BigProgressbar extends Component {
         return false;
     }
 
-    progressbarAnimationFinished = () => {
+    assetLoaded = () => {
+        this.currentLoad++;
+
+        if (this.currentLoad !== this.totalLoad) return;
+
+        this.props.assetLoaded();
+    };
+
+    updateValue = (value) => {
         this.setState({
-            playSound: false,
+            value: value,
         });
+    };
+
+    progressbarAnimationFinished = () => {
+        this.soundRef.current.pause();
 
         this.props.progressbarAnimationFinished();
     };
 
     render() {
-        const { label, value, maxValue, maxValueHidden, subLabel } = this.props;
-        const { playSound } = this.state;
+        const { label, maxValue, maxValueHidden, subLabel } = this.props;
+        const { value } = this.state;
 
         return (
             <div className="big-progressbar">
                 <span className="label">{label}</span>
                 <div className="value-content">
                     <span className="value">
-                        {value}
+                        <span>{value}</span>
                         {!maxValueHidden ? `/${maxValue}` : ``}
                     </span>
                     {subLabel && <span className="subLabel">{subLabel}</span>}
                 </div>
                 <div className="progress" ref={this.progressRef}></div>
-                {playSound && (
-                    <ReactAudioPlayer
-                        src={progressSound}
-                        autoPlay
-                        controls={false}
-                    />
-                )}
+                <audio
+                    src={progressSound}
+                    onCanPlayThrough={this.assetLoaded}
+                    ref={this.soundRef}
+                />
             </div>
         );
     }

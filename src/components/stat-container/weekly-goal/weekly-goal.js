@@ -40,7 +40,18 @@ class WeeklyGoal extends Component {
                 },
             ],
         };
+
+        this.totalLoad = 1; // Count of components to load external assets
+        this.currentLoad = 0; // Count of assets loaded
     }
+
+    assetLoaded = () => {
+        this.currentLoad++;
+
+        if (this.currentLoad !== this.totalLoad) return;
+
+        this.props.assetLoaded();
+    };
 
     render() {
         const {
@@ -72,6 +83,8 @@ class WeeklyGoal extends Component {
                     enableProgressAnimation={enableProgressAnimation}
                     progressbarPlayDuration={progressbarPlayDuration}
                     progressbarAnimationFinished={progressbarAnimationFinished}
+                    assetLoaded={this.assetLoaded}
+                    step={1}
                 />
             </div>
         );
