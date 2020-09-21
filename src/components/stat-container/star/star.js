@@ -80,9 +80,9 @@ class Star extends Component {
                 setTimeout(() => {
                     // Play sound
                     this.soundRef.current.play();
-                    setTimeout(() => {
-                        this.soundRef.current.pause();
-                    }, 600);
+                    // setTimeout(() => {
+                    //     this.soundRef.current.pause();
+                    // }, 600);
                 }, 200);
 
                 setTimeout(() => {

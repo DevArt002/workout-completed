@@ -19,15 +19,15 @@ class WorkoutCompletedContainer extends Component {
 
         // Durations
         this.fireworksMinPlayDuration = 2.5; // 2.5 seconds
-        this.wcShowDuration = 1;
-        this.wcHiddenDuration = 1;
-        this.characterPlayDuration = 1.3;
-        this.statContainerShowDuration = 1;
-        this.statContainerHiddenDuration = 1;
+        this.wcShowDuration = 0.3;
+        this.wcHiddenDuration = 0.4;
+        this.characterPlayDuration = 0.8;
+        this.statContainerShowDuration = 0.8;
+        this.statContainerHiddenDuration = 0.9;
         this.starShowDuration = 0.5;
-        this.starLightDuration = 1;
-        this.bigProgressbarPlayDuration = 2;
-        this.smallProgressbarPlayDuration = 1.5;
+        this.starLightDuration = 0.7;
+        this.bigProgressbarPlayDuration = 1.2;
+        this.smallProgressbarPlayDuration = 0.8;
 
         // Props from parent
         this.missionNumber = props.missionNumebr || 8;
@@ -51,9 +51,11 @@ class WorkoutCompletedContainer extends Component {
         this.setState({
             loadedAllAssets: true,
         });
+
+        setTimeout(() => this.startAnimations(), 1000);
     };
 
-    fireworksAnimationFinished = () => {
+    startAnimations = () => {
         this.setState({
             enableCharacterAnimation: true,
             enableStatAnimation: false,
@@ -117,7 +119,7 @@ class WorkoutCompletedContainer extends Component {
 
                 <FireworksContainer
                     fireworksMinPlayDuration={this.fireworksMinPlayDuration}
-                    fireworksAnimationFinished={this.fireworksAnimationFinished}
+                    // fireworksAnimationFinished={this.fireworksAnimationFinished}
                     loadedAllAssets={loadedAllAssets}
                     assetLoaded={this.assetLoaded}
                 />

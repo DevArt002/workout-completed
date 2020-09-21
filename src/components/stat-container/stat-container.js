@@ -105,16 +105,16 @@ class StatContainer extends Component {
     };
 
     statContainerShowAnimationFinished = () => {
-        setTimeout(() => {
-            this.setState({
-                enableStarShowAnimation: true,
-                enableStarLightAnimation: false,
-                enableScoreProgressAnimation: false,
-                enableSpeedProgressAnimation: false,
-                enableGoalProgressAnimation: false,
-            });
-            this.soundRef.current.pause();
-        }, 1500);
+        // setTimeout(() => {
+        this.setState({
+            enableStarShowAnimation: true,
+            enableStarLightAnimation: false,
+            enableScoreProgressAnimation: false,
+            enableSpeedProgressAnimation: false,
+            enableGoalProgressAnimation: false,
+        });
+        // this.soundRef.current.pause();
+        // }, 1500);
     };
 
     starShowAnimationFinished = () => {
@@ -125,20 +125,20 @@ class StatContainer extends Component {
         this.setState({
             enableStarShowAnimation: false,
             enableStarLightAnimation: true,
-            enableScoreProgressAnimation: false,
+            enableScoreProgressAnimation: true,
             enableSpeedProgressAnimation: false,
             enableGoalProgressAnimation: false,
         });
     };
 
     starLightAnimationFinished = () => {
-        this.setState({
-            enableStarShowAnimation: false,
-            enableStarLightAnimation: false,
-            enableScoreProgressAnimation: true,
-            enableSpeedProgressAnimation: false,
-            enableGoalProgressAnimation: false,
-        });
+        // this.setState({
+        //     enableStarShowAnimation: false,
+        //     enableStarLightAnimation: false,
+        //     enableScoreProgressAnimation: true,
+        //     enableSpeedProgressAnimation: false,
+        //     enableGoalProgressAnimation: false,
+        // });
     };
 
     scoreProgressbarAnimationFinished = () => {
