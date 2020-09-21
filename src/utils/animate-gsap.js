@@ -19,6 +19,7 @@ export const domAnimate = ({
     endWidth = "initial",
     curve = Linear.easeNone,
     reverse = false,
+    reverseDelay = 0,
     callback = null,
 }) => {
     const animateAction = TweenMax.fromTo(
@@ -45,7 +46,10 @@ export const domAnimate = ({
         }
     );
 
-    if (reverse) animateAction.then(() => animateAction.reverse());
+    if (reverse)
+        animateAction.then(() =>
+            setTimeout(() => animateAction.reverse(), reverseDelay * 1000)
+        );
 
     if (callback) animateAction.then(() => callback());
 

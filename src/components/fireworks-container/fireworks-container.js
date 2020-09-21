@@ -43,12 +43,12 @@ class FireworksContainer extends Component {
 
             setTimeout(() => {
                 this.fireworks.stop();
-                this.props.fireworksAnimationFinished();
+                // this.props.fireworksAnimationFinished();
             }, this.props.fireworksMinPlayDuration * 1000);
 
-            setTimeout(() => {
-                this.soundRef.current.pause();
-            }, this.props.fireworksMinPlayDuration * 1000 + 1000);
+            // setTimeout(() => {
+            //     this.soundRef.current.pause();
+            // }, this.props.fireworksMinPlayDuration * 1000 + 1000);
 
             return true;
         }

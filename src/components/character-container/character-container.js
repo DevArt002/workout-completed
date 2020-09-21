@@ -108,7 +108,7 @@ class CharacterContainer extends Component {
                 curve: Bounce.easeOut, // animation curve
             });
             this.state.characters.map((character, index) => {
-                domAnimate({
+                return domAnimate({
                     dom: character.ref.current,
                     duration: this.props.characterPlayDuration, //duration
                     startRotZ: character.startRotZ, // startRotZ
@@ -121,6 +121,7 @@ class CharacterContainer extends Component {
                     endWidth: character.endWidth,
                     curve: character.curve, // animation curve
                     reverse: character.reverse,
+                    reverseDelay: 0.2,
                 });
             });
             // After disappearance of characters, hidden workout completed text as well
@@ -129,7 +130,7 @@ class CharacterContainer extends Component {
                     dom: this.wcRef.current,
                     duration: this.props.wcHiddenDuration, //duration
                     startY: 0, // startY
-                    endY: 2000, // endY
+                    endY: "100vh", // endY
                     startWidth: "90%",
                     endWidth: "90%",
                     curve: Linear.easeNone, // animation curve
@@ -152,7 +153,7 @@ class CharacterContainer extends Component {
     };
 
     characterAnimationFinished = () => {
-        this.soundRef.current.pause();
+        // this.soundRef.current.pause();
         this.characterContainerRef.current.style.display = "none";
         this.props.characterAnimationFinished();
     };

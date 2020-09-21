@@ -69,7 +69,7 @@ class BigProgressbar extends Component {
     };
 
     progressbarAnimationFinished = () => {
-        this.soundRef.current.pause();
+        // this.soundRef.current.pause();
 
         this.props.progressbarAnimationFinished();
     };
