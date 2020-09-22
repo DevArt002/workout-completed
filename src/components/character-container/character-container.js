@@ -78,7 +78,7 @@ class CharacterContainer extends Component {
         this.wcRef = React.createRef();
         this.soundRef = React.createRef();
 
-        this.totalLoad = 3; // Count of components to load external assets
+        this.totalLoad = 5; // Count of components to load external assets
         this.currentLoad = 0; // Count of assets loaded
     }
 
@@ -94,6 +94,7 @@ class CharacterContainer extends Component {
             this.characterContainerRef.current.style.display = "inline";
             // Play sound
             this.soundRef.current.play();
+            this.soundRef.current.muted = false;
 
             // Show workout completed text
             domAnimate({
@@ -147,6 +148,7 @@ class CharacterContainer extends Component {
     assetLoaded = () => {
         this.currentLoad++;
 
+        this.soundRef.current.pause();
         if (this.currentLoad !== this.totalLoad) return;
 
         this.props.assetLoaded();
@@ -190,6 +192,8 @@ class CharacterContainer extends Component {
                     src={kidCheersSound}
                     onCanPlayThrough={this.assetLoaded}
                     ref={this.soundRef}
+                    autoPlay
+                    muted
                 />
             </div>
         );

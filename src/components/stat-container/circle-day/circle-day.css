@@ -12,20 +12,12 @@
     border: 3px solid black;
     border-color: white;
     text-align: center;
-    width: 30px;
-    height: 30px;
-    font: 28px Arial, sans-serif;
+    width: 26px;
+    height: 26px;
+    font: 24px Arial, sans-serif;
 }
 
 @media screen and (max-width: 1200px) {
-    .circle-day span {
-        width: 30px;
-        height: 30px;
-        font: 28px Arial, sans-serif;
-    }
-}
-
-@media screen and (max-width: 992px) {
     .circle-day span {
         width: 26px;
         height: 26px;
@@ -33,26 +25,34 @@
     }
 }
 
+@media screen and (max-width: 992px) {
+    .circle-day span {
+        width: 22px;
+        height: 22px;
+        font: 20px Arial, sans-serif;
+    }
+}
+
 @media screen and (max-width: 768px) {
     .circle-day span {
-        width: 20px;
-        height: 20px;
-        font: 18px Arial, sans-serif;
+        width: 18px;
+        height: 18px;
+        font: 16px Arial, sans-serif;
     }
 }
 
 @media screen and (max-width: 480px) {
     .circle-day span {
-        width: 16px;
-        height: 16px;
-        font: 14px Arial, sans-serif;
+        width: 12px;
+        height: 12px;
+        font: 10px Arial, sans-serif;
     }
 }
 
 @media screen and (max-width: 320px) {
     .circle-day span {
-        width: 10px;
-        height: 10px;
-        font: 8px Arial, sans-serif;
+        width: 8px;
+        height: 8px;
+        font: 6px Arial, sans-serif;
     }
 }
