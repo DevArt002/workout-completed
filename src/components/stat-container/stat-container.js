@@ -76,6 +76,7 @@ class StatContainer extends Component {
             this.statContainerRef.current.style.visibility = "visible";
             // Play sound
             this.soundRef.current.play();
+            this.soundRef.current.muted = false;
             // Show popup
             this.showAnimation = domAnimate({
                 dom: this.statContainerRef.current,
@@ -99,6 +100,7 @@ class StatContainer extends Component {
     assetLoaded = () => {
         this.currentLoad++;
 
+        this.soundRef.current.pause();
         if (this.currentLoad !== this.totalLoad) return;
 
         this.props.assetLoaded();
@@ -308,6 +310,8 @@ class StatContainer extends Component {
                     src={awardSound}
                     onCanPlayThrough={this.assetLoaded}
                     ref={this.soundRef}
+                    autoPlay
+                    muted
                 />
             </div>
         );

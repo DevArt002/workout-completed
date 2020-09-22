@@ -40,6 +40,7 @@ class FireworksContainer extends Component {
             this.fireworks.start();
             // Play sound
             this.soundRef.current.play();
+            this.soundRef.current.muted = false;
 
             setTimeout(() => {
                 this.fireworks.stop();
@@ -59,6 +60,7 @@ class FireworksContainer extends Component {
     assetLoaded = () => {
         this.currentLoad++;
 
+        this.soundRef.current.pause();
         if (this.currentLoad !== this.totalLoad) return;
 
         this.props.assetLoaded();
@@ -74,6 +76,8 @@ class FireworksContainer extends Component {
                     src={fireworksSound}
                     onCanPlayThrough={this.assetLoaded}
                     ref={this.soundRef}
+                    autoPlay
+                    muted
                 />
             </div>
         );

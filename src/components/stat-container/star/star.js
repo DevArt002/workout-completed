@@ -80,6 +80,7 @@ class Star extends Component {
                 setTimeout(() => {
                     // Play sound
                     this.soundRef.current.play();
+                    this.soundRef.current.muted = false;
                     // setTimeout(() => {
                     //     this.soundRef.current.pause();
                     // }, 600);
@@ -113,6 +114,7 @@ class Star extends Component {
     assetLoaded = () => {
         this.currentLoad++;
 
+        this.soundRef.current.pause();
         if (this.currentLoad !== this.totalLoad) return;
 
         this.props.assetLoaded();
@@ -187,6 +189,8 @@ class Star extends Component {
                     src={rewardSound}
                     onCanPlayThrough={this.assetLoaded}
                     ref={this.soundRef}
+                    autoPlay
+                    muted
                 />
             </div>
         );
