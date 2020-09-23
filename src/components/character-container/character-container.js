@@ -32,8 +32,8 @@ class CharacterContainer extends Component {
                     ref: React.createRef(),
                     startRotZ: -10,
                     endRotZ: 45,
-                    startX: 0,
-                    endX: 0,
+                    startX: "-50%",
+                    endX: "-50%",
                     startY: 800,
                     endY: 0,
                     startWidth: "40%",
@@ -47,8 +47,8 @@ class CharacterContainer extends Component {
                     ref: React.createRef(),
                     startRotZ: -20,
                     endRotZ: 30,
-                    startX: 90,
-                    endX: 90,
+                    startX: "20%",
+                    endX: "20%",
                     startY: 1100,
                     endY: 150,
                     startWidth: "40%",
@@ -61,8 +61,8 @@ class CharacterContainer extends Component {
                     id: "character3",
                     ref: React.createRef(),
                     startRotZ: 10,
-                    startX: -90,
-                    endX: -90,
+                    startX: "-120%",
+                    endX: "-120%",
                     endRotZ: -20,
                     startY: 1250,
                     endY: 100,
@@ -91,7 +91,7 @@ class CharacterContainer extends Component {
             this.props.enableCharacterAnimation
         ) {
             // Show all hidden
-            this.characterContainerRef.current.style.display = "inline";
+            this.characterContainerRef.current.style.visibility = "visible";
             // Play sound
             this.soundRef.current.play();
             this.soundRef.current.muted = false;
@@ -102,6 +102,8 @@ class CharacterContainer extends Component {
                 duration: this.props.wcShowDuration, // duration
                 startScale: 0, // startScale
                 endScale: 1, // endScale
+                startX: "-50%",
+                endX: "-50%",
                 startY: 300, // startY
                 endY: 0, // endY
                 startWidth: "90%",
@@ -130,6 +132,8 @@ class CharacterContainer extends Component {
                 domAnimate({
                     dom: this.wcRef.current,
                     duration: this.props.wcHiddenDuration, //duration
+                    startX: "-50%",
+                    endX: "-50%",
                     startY: 0, // startY
                     endY: "100vh", // endY
                     startWidth: "90%",
@@ -156,7 +160,7 @@ class CharacterContainer extends Component {
 
     characterAnimationFinished = () => {
         // this.soundRef.current.pause();
-        this.characterContainerRef.current.style.display = "none";
+        this.characterContainerRef.current.style.display = "hidden";
         this.props.characterAnimationFinished();
     };
 
