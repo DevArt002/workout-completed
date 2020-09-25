@@ -62,7 +62,7 @@ class StatContainer extends Component {
     }
 
     componentDidMount() {
-        this.sparkle = new Sparkle(this.particleRef.current, 80);
+        this.sparkle = new Sparkle(this.particleRef.current, 50);
     }
 
     componentDidUpdate(prevProps, prevState, snapshot) {}
