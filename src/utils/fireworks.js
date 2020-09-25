@@ -373,7 +373,7 @@ export class Sparkle {
                     hue: 40,
                     brightness: random(50, 60),
                     exploding: true,
-                    fade: 0.005,
+                    fade: 0.015,
                     spikes: 5,
                     size: 14,
                 })
