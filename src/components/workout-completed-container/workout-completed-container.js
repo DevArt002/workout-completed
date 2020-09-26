@@ -24,7 +24,7 @@ class WorkoutCompletedContainer extends Component {
         this.characterPlayDuration = 0.8;
         this.statContainerShowDuration = 0.8;
         this.statContainerHiddenDuration = 0.9;
-        this.starShowDuration = 0.5;
+        this.starShowDuration = 0.4;
         this.starLightDuration = 0.7;
         this.bigProgressbarPlayDuration = 1.2;
         this.smallProgressbarPlayDuration = 0.8;
@@ -51,8 +51,7 @@ class WorkoutCompletedContainer extends Component {
         this.setState({
             loadedAllAssets: true,
         });
-
-        setTimeout(() => this.startAnimations(), 1000);
+        this.startAnimations();
     };
 
     startAnimations = () => {

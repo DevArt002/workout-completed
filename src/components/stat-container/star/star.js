@@ -72,7 +72,7 @@ class Star extends Component {
                     startWidth: this.state.starSize, // startWidth
                     endWidth: this.state.starSize, // endWidth
                     curve: Bounce.easeOut, // animation curve
-                    callback: this.props.starShowAnimationFinished,
+                    callback: this.starShowAnimationFinished,
                 });
 
                 this.spriteRef.current.style.visibility = "visible";
@@ -81,19 +81,13 @@ class Star extends Component {
                     // Play sound
                     this.soundRef.current.play();
                     this.soundRef.current.muted = false;
-                    // setTimeout(() => {
-                    //     this.soundRef.current.pause();
-                    // }, 600);
-                }, 200);
-
-                setTimeout(() => {
                     const boundingClientRect = this.baseRef.current.getBoundingClientRect();
                     const centerPosX =
                         boundingClientRect.left + boundingClientRect.width / 2;
                     const centerPosY =
                         boundingClientRect.top + boundingClientRect.height / 2;
                     this.props.addSparkles(centerPosX, centerPosY);
-                }, 500);
+                }, 300);
             }, this.delay * 1000);
 
             return true;
@@ -118,6 +112,10 @@ class Star extends Component {
         if (this.currentLoad !== this.totalLoad) return;
 
         this.props.assetLoaded();
+    };
+
+    starShowAnimationFinished = () => {
+        setTimeout(() => this.props.starShowAnimationFinished(), 500);
     };
 
     // Sweep light animation
