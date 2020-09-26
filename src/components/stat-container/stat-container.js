@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Bounce } from "gsap";
+import { Linear } from "gsap";
 import { isWebpSupported } from "react-image-webp/dist/utils";
 import { domAnimate } from "../../utils/animate-gsap";
 import Star from "./star/star";
@@ -62,7 +62,7 @@ class StatContainer extends Component {
     }
 
     componentDidMount() {
-        this.sparkle = new Sparkle(this.particleRef.current, 50);
+        this.sparkle = new Sparkle(this.particleRef.current, 30);
     }
 
     componentDidUpdate(prevProps, prevState, snapshot) {}
@@ -87,7 +87,7 @@ class StatContainer extends Component {
                 endX: "-50%",
                 startY: -2000, // startY
                 endY: "-50%", // endY
-                curve: Bounce.easeOut, // animation curve
+                curve: Linear.easeIn, // animation curve
                 callback: this.statContainerShowAnimationFinished,
             });
 
